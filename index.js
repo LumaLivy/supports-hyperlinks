@@ -1,6 +1,7 @@
 'use strict';
 const supportsColor = require('supports-color');
 const hasFlag = require('has-flag');
+const { execSync } = require("child_process");
 
 function parseVersion(versionString) {
 	if (/^\d{3,4}$/.test(versionString)) {
@@ -83,6 +84,13 @@ function supportsHyperlink(stream) {
 
 		const version = parseVersion(env.VTE_VERSION);
 		return version.major > 0 || version.minor >= 50;
+	}
+	if ("TERM" in env) {
+		if (env.TERM === "xterm-kitty") {
+			return !execSync(
+				"kitty +kitten query_terminal allow_hyperlinks"
+			).includes("no");
+		}
 	}
 
 	return false;
